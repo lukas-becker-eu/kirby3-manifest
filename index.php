@@ -1,24 +1,74 @@
 <?php
-
-function manifest() {
-  return Html::tag('link', null, ["rel" => "manifest", "href" => u('/manifest.json')]).PHP_EOL
+function manifest($r = '/manifest.json') {
+  return Html::tag('link', null, ["rel" => "manifest", "href" => u($r)]).PHP_EOL;
 }
 
 Kirby::plugin('wearecandyblue/manifest', [
+  // https://github.com/getkirby/kirby/issues/2343
+  'options' => [
+    'pattern' => 'manifest.json',
+    'name' => site()->title()->escape(),
+    'short_name' => site()->title()->escape(),
+    'icon' => site()->icon()->toFile(),
+    'dir' => 'ltr',
+    'lang' => kirby()->language()->code(),
+    'start_url' => './?utm_source=pwa',
+    'display' => 'fullscreen',
+    'background_color' => '#fff',
+    'theme_color' => '',
+    'description' => site()->description()->escape(),
+    'orientation' => 'portrait',
+    'scope' => '/',
+  ],
   'routes' => function ($kirby) {
     return [
       [
-        'pattern' => 'manifest.json',
+        'pattern' => option('wearecandyblue.manifest.pattern', 'manifest.json'),
         'action' => function () {
           return [
-            'status' => 'ok',
-            'data'   => ['foo' => 'bar']
+            'name' => (string)option('wearecandyblue.manifest.name'),
+            'short_name' => (string)option('wearecandyblue.manifest.short_name'),
+            'dir' => (string)option('wearecandyblue.manifest.dir'),
+            'lang' => (string)option('wearecandyblue.manifest.lang'),
+            'start_url' => (string)option('wearecandyblue.manifest.start_url'),
+            'display' => (string)option('wearecandyblue.manifest.display'),
+            'background_color' => (string)option('wearecandyblue.manifest.background_color'),
+            'description' => (string)option('wearecandyblue.manifest.description'),
+            'background_color' => (string)option('wearecandyblue.manifest.background_color'),
+            'theme_color' => (string)option('wearecandyblue.manifest.background_color'),
+
+            //64
+            //128
+            //192x192
+            //512x512
+            'icons'   =>
+              [
+                [
+                  'src' => (string)option('wearecandyblue.manifest.icon')->resize('192')->url(),
+                  'sizes' => (string)preg_replace("/\s+/", "", option('wearecandyblue.manifest.icon')->resize('192')->dimensions()),
+                  'type' => (string)option('wearecandyblue.manifest.icon')->mime()
+                ],
+                [
+                  'src' => (string)option('wearecandyblue.manifest.icon')->resize('512')->url(),
+                  'sizes' => (string)preg_replace("/\s+/", "", option('wearecandyblue.manifest.icon')->resize('512')->dimensions()),
+                  'type' => (string)option('wearecandyblue.manifest.icon')->mime()
+                ],
+              ],
+
+            'orientation' => (string)option('wearecandyblue.manifest.orientation'),
+            //'related_applications' => ['platform' => '', 'url' => '', 'id' => ''],
+            'scope' => (string)option('wearecandyblue.manifest.scope'),
           ];
         }
       ]
     ];
   }
 ]);
+
+/*
+option('someOtherOption', 'my fallback');
+*/
+
 
 /*
 
