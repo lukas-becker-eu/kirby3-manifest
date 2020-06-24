@@ -1,9 +1,10 @@
 <?php
 
+function manifest() {
+  return Html::tag('link', null, ["rel" => "manifest", "href" => u('/manifest.json')]).PHP_EOL
+}
+
 Kirby::plugin('wearecandyblue/manifest', [
-  function manifest() {
-    return Html::tag('link', null, ["rel" => "manifest", "href" => u('/manifest.json')]).PHP_EOL
-  },
   'routes' => function ($kirby) {
     return [
       [
